@@ -1,0 +1,42 @@
+trigger: none
+
+variables:
+  TF_IN_AUTOMATION: 1
+  ARM_TENANT_ID: 'fa07c4aa-54b4-4654-a33e-3209f4138cab'
+  TARGET_FOLDER: '$(Build.Repository.Name)'
+  POOL_NAME: 'kk-cloudservices-score-outfw-linux-dev'
+  environment: 'dev'
+  
+stages:
+  
+  - stage: plan
+    displayName: Terraform plan
+    jobs:
+    - template : terraform-plan-job-templates.yml
+      parameters:
+        foldernames : [
+													 # Add placeholderfornewconfigfolder  DO NOT Delete this line
+													 #"kk-cde-vli-dev-sub-01-neu-wvd1",
+													 #"kk-cde-ai-dev-sub-01-neu-wvd1"
+													 #"kk-ado-wvd-dev-sub-01-neu-wvd1",
+													 #"kk-cde-th-dev-sub-01-neu-wvd1",
+													 "kk-itl-wvd-dev-sub-01-neu-wvd1",
+													 #"kk-cde-crq-dev-sub-01-neu-wvd1",
+													 #"kk-gen-wvd-dev-sub-01-neu-wvd1",
+													 "kk-adm-wvd-dev-sub-01-neu-wvd1", # Currently not working
+													 "kk-cde-dq-dev-sub-01-neu-wvd1",
+													 #"kk-com-cdf-dev-sub-01-neu-wvd1",
+													 #"kk-acst-lztest-dev-sub-01-neu-wvd3",
+													 "kk-com-img-dev-sub-01-neu-wvd1",
+													 #"kk-acst-lztest-dev-sub-01-neu-wvd1",
+													 "kk-cde-edi-dev-sub-01-neu-wvd1",
+													 #"kk-cde-met-dev-sub-01-neu-wvd1",
+													 "kk-cde-met-dev-sub-02-neu-wvd2",
+													 #"kk-acst-lztest-dev-sub-01-neu-wvd2"
+                      ] 
+
+  - stage: PRComments
+    displayName: PRComments
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+    - template : tfplansummary-template.yml     
